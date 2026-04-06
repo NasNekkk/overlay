@@ -50,20 +50,21 @@ body {
   top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   align-items: center;
-  padding: 0 10px;
-  gap: 14px;
+  justify-content: center;
+  padding: 0 6px;
+  gap: 6px;
   opacity: 0;
   transition: opacity 0.6s ease;
 }
 .social-group.active { opacity: 1; }
-.social-entry { display: inline-flex; align-items: center; gap: 5px; }
+.social-entry { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .social-icon {
-  width: 12px; height: 12px;
+  width: 11px; height: 11px;
   display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 2px; font-size: 7px; flex-shrink: 0;
+  border-radius: 2px; font-size: 6px; flex-shrink: 0;
 }
-.social-handle { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600; color: #fff; }
-.social-sep { color: #444; font-size: 9px; }
+.social-handle { font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 600; color: #fff; white-space: nowrap; }
+.social-sep { color: #444; font-size: 8px; flex-shrink: 0; }
 
 .icon-twitch    { background: #9146ff; color: #fff; }
 .icon-tiktok    { background: #010101; color: #fff; }
