@@ -16,6 +16,13 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
+/* ── GPU HINTS ── */
+.gpu {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* ── COINS CNN ── */
 .fc { position: absolute; width: 20px; height: 20px; }
 .fc::before, .fc::after { content: ''; position: absolute; background: #cc0000; }
@@ -29,18 +36,18 @@ body {
 /* ── BARRE TOP ── */
 .ftop { position: absolute; top: 0; left: 0; right: 0; height: 2.5px; background: #cc0000; }
 
-/* ── HUD B ── */
+/* ── HUD ── */
 .hud { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-.htime { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: #fff; letter-spacing: .1em; line-height: 1; text-shadow: 0 1px 6px rgba(0,0,0,.98); }
+.htime { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: #fff; letter-spacing: .1em; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,.9); }
 .hrow { display: flex; align-items: center; gap: 5px; }
-.hres { font-family: 'DM Mono', monospace; font-size: 9px; color: #ccc; letter-spacing: .1em; text-transform: uppercase; text-shadow: 0 1px 5px rgba(0,0,0,.98); }
+.hres { font-family: 'DM Mono', monospace; font-size: 9px; color: #ccc; letter-spacing: .1em; text-transform: uppercase; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
 .hbadge { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 700; padding: 2px 7px; letter-spacing: .12em; display: flex; align-items: center; gap: 4px; }
-.hbdot { width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: blnk 1s ease-in-out infinite; }
+.hbdot { width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: blnk 1s steps(2) infinite; }
 
 /* ── TICKER ── */
 .ticker { position: absolute; bottom: 30px; left: 0; right: 0; height: 18px; display: flex; overflow: hidden; }
 .ttag { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.tdot { width: 3px; height: 3px; background: #fff; border-radius: 50%; animation: blnk 1s ease-in-out infinite; }
+.tdot { width: 3px; height: 3px; background: #fff; border-radius: 50%; animation: blnk 1s steps(2) infinite; }
 #tr { flex: 1; background: rgba(8,8,8,.92); border-top: 1.5px solid #cc0000; overflow: hidden; display: flex; align-items: center; transition: opacity .3s; }
 
 .icon-twitch    { background: #9146ff; color: #fff; }
@@ -57,15 +64,33 @@ body {
 .bnm { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; color: #fff; line-height: 1.1; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .btt { font-family: 'DM Mono', monospace; font-size: 7px; color: #555; letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bright { background: rgba(10,10,10,.95); display: flex; align-items: center; gap: 6px; padding: 0 10px; flex-shrink: 0; border-left: 1px solid #2a2a2a; }
-.bdot { width: 6px; height: 6px; border-radius: 50%; background: #cc0000; animation: blnk 1s ease-in-out infinite; box-shadow: 0 0 5px 2px rgba(204,0,0,.65); }
+.bdot { width: 6px; height: 6px; border-radius: 50%; background: #cc0000; animation: blnk 1s steps(2) infinite; box-shadow: 0 0 4px 1px rgba(204,0,0,.5); }
 .boa { font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 600; color: #fff; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
 
-/* ── SCAN ── */
-.scan { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,.04); animation: sc 5s linear infinite; pointer-events: none; }
+/* ── SCAN – optimisé GPU ── */
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,.04);
+  top: 0;
+  will-change: transform;
+  animation: sc 5s linear infinite;
+  pointer-events: none;
+}
 
-@keyframes blnk   { 0%,100%{opacity:1} 50%{opacity:.2} }
-@keyframes sc     { 0%{top:0%} 100%{top:100%} }
-@keyframes ftAnim { 0%{transform:translateX(384px)} 100%{transform:translateX(-100%)} }
+@keyframes blnk { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes sc   { 0%{transform:translateY(0)} 100%{transform:translateY(216px)} }
+
+/* ── TICKER scroll – optimisé GPU ── */
+.ticker-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  backface-visibility: hidden;
+}
 </style>
 </head>
 <body>
@@ -103,15 +128,25 @@ body {
 </div>
 
 <script>
-function tick() {
-  var n = new Date(), e = document.getElementById('ht');
-  if (e) e.textContent =
-    String(n.getHours()).padStart(2,'0') + ':' +
-    String(n.getMinutes()).padStart(2,'0') + ':' +
-    String(n.getSeconds()).padStart(2,'0');
-}
-tick(); setInterval(tick, 1000);
+/* ── HORLOGE – requestAnimationFrame ── */
+var htEl = document.getElementById('ht');
+var lastSec = -1;
 
+function tick() {
+  var n = new Date();
+  var s = n.getSeconds();
+  if (s !== lastSec) {
+    lastSec = s;
+    htEl.textContent =
+      String(n.getHours()).padStart(2,'0') + ':' +
+      String(n.getMinutes()).padStart(2,'0') + ':' +
+      String(s).padStart(2,'0');
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ── TICKER – animation JS GPU ── */
 var socials = [
   { fa: 'fa-brands fa-twitch',    cls: 'icon-twitch'    },
   { fa: 'fa-brands fa-tiktok',    cls: 'icon-tiktok'    },
@@ -147,6 +182,35 @@ function buildMsg() {
   }).join('');
 }
 
+/* Animation ticker via requestAnimationFrame + transform */
+var activeAnim = null;
+
+function animateTicker(el, duration) {
+  var trackWidth = document.getElementById('tr').offsetWidth;
+  var contentWidth = el.offsetWidth;
+  var startX = trackWidth;
+  var endX = -contentWidth;
+  var totalDist = startX - endX;
+  var startTime = null;
+
+  if (activeAnim) cancelAnimationFrame(activeAnim);
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = (timestamp - startTime) / (duration * 1000);
+    if (progress >= 1) progress = 1;
+    var x = startX - (totalDist * progress);
+    el.style.transform = 'translateX(' + x + 'px)';
+    if (progress < 1) {
+      activeAnim = requestAnimationFrame(step);
+    } else {
+      startTime = null;
+      activeAnim = requestAnimationFrame(step);
+    }
+  }
+  activeAnim = requestAnimationFrame(step);
+}
+
 function renderCycle(c) {
   var track = document.getElementById('tr');
   var lbl   = document.getElementById('tlbl');
@@ -154,13 +218,13 @@ function renderCycle(c) {
   track.style.opacity = '0';
   setTimeout(function() {
     var d = document.createElement('div');
-    d.style.cssText = 'display:flex;align-items:center;white-space:nowrap;';
+    d.className = 'ticker-content';
     d.innerHTML = c === 0 ? buildSocial() : buildMsg();
-    d.style.animation = 'ftAnim ' + (c === 0 ? '18' : '22') + 's linear infinite';
     if (lbl) lbl.textContent = c === 0 ? 'RÉSEAUX' : 'BREAKING';
     track.innerHTML = '';
     track.appendChild(d);
     track.style.opacity = '1';
+    animateTicker(d, c === 0 ? 18 : 22);
   }, 300);
 }
 
