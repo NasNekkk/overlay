@@ -16,14 +16,7 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ── GPU HINTS ── */
-.gpu {
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* ── COINS CNN ── */
+/* ── COINS ── */
 .fc { position: absolute; width: 20px; height: 20px; }
 .fc::before, .fc::after { content: ''; position: absolute; background: #cc0000; }
 .fc::before { width: 100%; height: 2.5px; }
@@ -46,9 +39,37 @@ body {
 
 /* ── TICKER ── */
 .ticker { position: absolute; bottom: 30px; left: 0; right: 0; height: 18px; display: flex; overflow: hidden; }
-.ttag { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.ttag { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; z-index: 2; }
 .tdot { width: 3px; height: 3px; background: #fff; border-radius: 50%; animation: blnk 1s steps(2) infinite; }
-#tr { flex: 1; background: rgba(8,8,8,.92); border-top: 1.5px solid #cc0000; overflow: hidden; display: flex; align-items: center; transition: opacity .3s; }
+#tr {
+  flex: 1;
+  background: rgba(8,8,8,.92);
+  border-top: 1.5px solid #cc0000;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── TICKER SCROLL – 100% CSS, GPU only ── */
+.scroll-wrap {
+  display: flex;
+  white-space: nowrap;
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  align-items: center;
+  will-change: transform;
+}
+.scroll-wrap.socials  { animation: scroll-socials 20s linear infinite; }
+.scroll-wrap.messages { animation: scroll-messages 24s linear infinite; }
+
+@keyframes scroll-socials {
+  0%   { transform: translateX(320px); }
+  100% { transform: translateX(-900px); }
+}
+@keyframes scroll-messages {
+  0%   { transform: translateX(320px); }
+  100% { transform: translateX(-1100px); }
+}
 
 .icon-twitch    { background: #9146ff; color: #fff; }
 .icon-tiktok    { background: #010101; color: #fff; }
@@ -67,14 +88,10 @@ body {
 .bdot { width: 6px; height: 6px; border-radius: 50%; background: #cc0000; animation: blnk 1s steps(2) infinite; box-shadow: 0 0 4px 1px rgba(204,0,0,.5); }
 .boa { font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 600; color: #fff; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
 
-/* ── SCAN – optimisé GPU ── */
+/* ── SCAN ── */
 .scan {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
+  position: absolute; left: 0; right: 0; height: 1px;
   background: rgba(255,255,255,.04);
-  top: 0;
   will-change: transform;
   animation: sc 5s linear infinite;
   pointer-events: none;
@@ -82,15 +99,6 @@ body {
 
 @keyframes blnk { 0%,100%{opacity:1} 50%{opacity:0} }
 @keyframes sc   { 0%{transform:translateY(0)} 100%{transform:translateY(216px)} }
-
-/* ── TICKER scroll – optimisé GPU ── */
-.ticker-content {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  will-change: transform;
-  backface-visibility: hidden;
-}
 </style>
 </head>
 <body>
@@ -112,7 +120,44 @@ body {
 
 <div class="ticker">
   <div class="ttag"><div class="tdot"></div><span id="tlbl">RÉSEAUX</span></div>
-  <div id="tr"></div>
+  <div id="tr">
+    <div class="scroll-wrap socials" id="ticker-socials">
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-twitch" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-twitch"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span><span style="color:#444;padding-right:16px;font-size:9px;">·</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-tiktok" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-tiktok"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span><span style="color:#444;padding-right:16px;font-size:9px;">·</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-youtube" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-youtube"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span><span style="color:#444;padding-right:16px;font-size:9px;">·</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-instagram" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-instagram"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span><span style="color:#444;padding-right:16px;font-size:9px;">·</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-discord" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-discord"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span><span style="color:#444;padding-right:16px;font-size:9px;">·</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;">
+        <span class="icon-twitter" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;"><i class="fa-brands fa-x-twitter"></i></span>
+        <span style="font-size:9px;font-weight:600;color:#fff;">@NasNekkk</span>
+      </span>
+    </div>
+    <div class="scroll-wrap messages" id="ticker-messages" style="display:none;">
+      <span style="font-size:9px;color:#ddd;padding-right:16px;">Bienvenue sur le stream de NasNekkk</span>
+      <span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>
+      <span style="font-size:9px;color:#ddd;padding-right:16px;">Abonnez-vous pour ne rien manquer</span>
+      <span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>
+      <span style="font-size:9px;color:#ddd;padding-right:16px;">Stream tous les soirs</span>
+      <span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>
+      <span style="font-size:9px;color:#ddd;padding-right:16px;">Posez vos questions en chat</span>
+      <span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>
+    </div>
+  </div>
 </div>
 
 <div class="badge">
@@ -128,13 +173,11 @@ body {
 </div>
 
 <script>
-/* ── HORLOGE – requestAnimationFrame ── */
+/* ── HORLOGE uniquement ── */
 var htEl = document.getElementById('ht');
 var lastSec = -1;
-
 function tick() {
-  var n = new Date();
-  var s = n.getSeconds();
+  var n = new Date(), s = n.getSeconds();
   if (s !== lastSec) {
     lastSec = s;
     htEl.textContent =
@@ -146,90 +189,30 @@ function tick() {
 }
 requestAnimationFrame(tick);
 
-/* ── TICKER – animation JS GPU ── */
-var socials = [
-  { fa: 'fa-brands fa-twitch',    cls: 'icon-twitch'    },
-  { fa: 'fa-brands fa-tiktok',    cls: 'icon-tiktok'    },
-  { fa: 'fa-brands fa-youtube',   cls: 'icon-youtube'   },
-  { fa: 'fa-brands fa-instagram', cls: 'icon-instagram' },
-  { fa: 'fa-brands fa-discord',   cls: 'icon-discord'   },
-  { fa: 'fa-brands fa-x-twitter', cls: 'icon-twitter'   }
-];
-var msgs = [
-  'Bienvenue sur le stream de NasNekkk',
-  'Abonnez-vous pour ne rien manquer',
-  'Stream tous les soirs',
-  'Posez vos questions en chat'
-];
-var handle = '@NasNekkk';
+/* ── SWITCH socials/messages – pas de rebuild DOM ── */
+var socEl = document.getElementById('ticker-socials');
+var msgEl = document.getElementById('ticker-messages');
+var lblEl = document.getElementById('tlbl');
 var cur = 0;
 
-function buildSocial() {
-  return socials.map(function(s) {
-    return '<span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;white-space:nowrap;">' +
-      '<span class="' + s.cls + '" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;flex-shrink:0;">' +
-      '<i class="' + s.fa + '"></i></span>' +
-      '<span style="font-size:9px;font-weight:600;color:#fff;">' + handle + '</span>' +
-      '</span>' +
-      '<span style="color:#444;padding-right:16px;font-size:9px;">·</span>';
-  }).join('');
-}
-
-function buildMsg() {
-  return msgs.map(function(m) {
-    return '<span style="font-size:9px;color:#ddd;padding-right:16px;white-space:nowrap;">' + m + '</span>' +
-           '<span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>';
-  }).join('');
-}
-
-/* Animation ticker via requestAnimationFrame + transform */
-var activeAnim = null;
-
-function animateTicker(el, duration) {
-  var trackWidth = document.getElementById('tr').offsetWidth;
-  var contentWidth = el.offsetWidth;
-  var startX = trackWidth;
-  var endX = -contentWidth;
-  var totalDist = startX - endX;
-  var startTime = null;
-
-  if (activeAnim) cancelAnimationFrame(activeAnim);
-
-  function step(timestamp) {
-    if (!startTime) startTime = timestamp;
-    var progress = (timestamp - startTime) / (duration * 1000);
-    if (progress >= 1) progress = 1;
-    var x = startX - (totalDist * progress);
-    el.style.transform = 'translateX(' + x + 'px)';
-    if (progress < 1) {
-      activeAnim = requestAnimationFrame(step);
-    } else {
-      startTime = null;
-      activeAnim = requestAnimationFrame(step);
-    }
+setInterval(function() {
+  cur = cur === 0 ? 1 : 0;
+  if (cur === 0) {
+    msgEl.style.display = 'none';
+    socEl.style.display = 'flex';
+    socEl.style.animation = 'none';
+    void socEl.offsetWidth;
+    socEl.style.animation = 'scroll-socials 20s linear infinite';
+    lblEl.textContent = 'RÉSEAUX';
+  } else {
+    socEl.style.display = 'none';
+    msgEl.style.display = 'flex';
+    msgEl.style.animation = 'none';
+    void msgEl.offsetWidth;
+    msgEl.style.animation = 'scroll-messages 24s linear infinite';
+    lblEl.textContent = 'BREAKING';
   }
-  activeAnim = requestAnimationFrame(step);
-}
-
-function renderCycle(c) {
-  var track = document.getElementById('tr');
-  var lbl   = document.getElementById('tlbl');
-  if (!track) return;
-  track.style.opacity = '0';
-  setTimeout(function() {
-    var d = document.createElement('div');
-    d.className = 'ticker-content';
-    d.innerHTML = c === 0 ? buildSocial() : buildMsg();
-    if (lbl) lbl.textContent = c === 0 ? 'RÉSEAUX' : 'BREAKING';
-    track.innerHTML = '';
-    track.appendChild(d);
-    track.style.opacity = '1';
-    animateTicker(d, c === 0 ? 18 : 22);
-  }, 300);
-}
-
-renderCycle(0);
-setInterval(function() { cur = cur === 0 ? 1 : 0; renderCycle(cur); }, 14000);
+}, 14000);
 </script>
 </body>
 </html>
