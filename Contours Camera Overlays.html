@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 384px;
+  height: 216px;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── COINS CNN ── */
+.fc { position: absolute; width: 20px; height: 20px; }
+.fc::before, .fc::after { content: ''; position: absolute; background: #cc0000; }
+.fc::before { width: 100%; height: 2.5px; }
+.fc::after  { width: 2.5px; height: 100%; }
+.tl { top: 0; left: 0; }
+.tr { top: 0; right: 0; transform: scaleX(-1); }
+.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.br { bottom: 0; right: 0; transform: scale(-1); }
+
+/* ── BARRE TOP ── */
+.ftop { position: absolute; top: 0; left: 0; right: 0; height: 2.5px; background: #cc0000; }
+
+/* ── HUD B ── */
+.hud { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.htime { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: #fff; letter-spacing: .1em; line-height: 1; text-shadow: 0 1px 6px rgba(0,0,0,.98); }
+.hrow { display: flex; align-items: center; gap: 5px; }
+.hres { font-family: 'DM Mono', monospace; font-size: 9px; color: #ccc; letter-spacing: .1em; text-transform: uppercase; text-shadow: 0 1px 5px rgba(0,0,0,.98); }
+.hbadge { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 700; padding: 2px 7px; letter-spacing: .12em; display: flex; align-items: center; gap: 4px; }
+.hbdot { width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: blnk 1s ease-in-out infinite; }
+
+/* ── TICKER ── */
+.ticker { position: absolute; bottom: 30px; left: 0; right: 0; height: 18px; display: flex; overflow: hidden; }
+.ttag { background: #cc0000; color: #fff; font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.tdot { width: 3px; height: 3px; background: #fff; border-radius: 50%; animation: blnk 1s ease-in-out infinite; }
+#tr { flex: 1; background: rgba(8,8,8,.92); border-top: 1.5px solid #cc0000; overflow: hidden; display: flex; align-items: center; transition: opacity .3s; }
+
+.icon-twitch    { background: #9146ff; color: #fff; }
+.icon-tiktok    { background: #010101; color: #fff; }
+.icon-youtube   { background: #ff0000; color: #fff; }
+.icon-instagram { background: #e1306c; color: #fff; }
+.icon-discord   { background: #5865f2; color: #fff; }
+.icon-twitter   { background: #000;    color: #fff; }
+
+/* ── BADGE NOM ── */
+.badge { position: absolute; bottom: 0; left: 0; right: 0; height: 30px; display: flex; align-items: stretch; }
+.btag { background: #cc0000; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 700; padding: 0 10px; display: flex; align-items: center; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; flex-shrink: 0; }
+.bname { flex: 1; background: rgba(10,10,10,.95); display: flex; flex-direction: column; justify-content: center; padding: 0 10px; min-width: 0; }
+.bnm { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; color: #fff; line-height: 1.1; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btt { font-family: 'DM Mono', monospace; font-size: 7px; color: #555; letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bright { background: rgba(10,10,10,.95); display: flex; align-items: center; gap: 6px; padding: 0 10px; flex-shrink: 0; border-left: 1px solid #2a2a2a; }
+.bdot { width: 6px; height: 6px; border-radius: 50%; background: #cc0000; animation: blnk 1s ease-in-out infinite; box-shadow: 0 0 5px 2px rgba(204,0,0,.65); }
+.boa { font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 600; color: #fff; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+
+/* ── SCAN ── */
+.scan { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,.04); animation: sc 5s linear infinite; pointer-events: none; }
+
+@keyframes blnk   { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes sc     { 0%{top:0%} 100%{top:100%} }
+@keyframes ftAnim { 0%{transform:translateX(384px)} 100%{transform:translateX(-100%)} }
+</style>
+</head>
+<body>
+
+<div class="scan"></div>
+<div class="fc tl"></div>
+<div class="fc tr"></div>
+<div class="fc bl"></div>
+<div class="fc br"></div>
+<div class="ftop"></div>
+
+<div class="hud">
+  <div class="htime" id="ht">00:00:00</div>
+  <div class="hrow">
+    <div class="hres">1080p</div>
+    <div class="hbadge"><div class="hbdot"></div>LIVE</div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ttag"><div class="tdot"></div><span id="tlbl">RÉSEAUX</span></div>
+  <div id="tr"></div>
+</div>
+
+<div class="badge">
+  <div class="btag">LIVE</div>
+  <div class="bname">
+    <div class="bnm">NasNekkk</div>
+    <div class="btt">Streameur · Gaming</div>
+  </div>
+  <div class="bright">
+    <div class="bdot"></div>
+    <div class="boa">On air</div>
+  </div>
+</div>
+
+<script>
+function tick() {
+  var n = new Date(), e = document.getElementById('ht');
+  if (e) e.textContent =
+    String(n.getHours()).padStart(2,'0') + ':' +
+    String(n.getMinutes()).padStart(2,'0') + ':' +
+    String(n.getSeconds()).padStart(2,'0');
+}
+tick(); setInterval(tick, 1000);
+
+var socials = [
+  { fa: 'fa-brands fa-twitch',    cls: 'icon-twitch'    },
+  { fa: 'fa-brands fa-tiktok',    cls: 'icon-tiktok'    },
+  { fa: 'fa-brands fa-youtube',   cls: 'icon-youtube'   },
+  { fa: 'fa-brands fa-instagram', cls: 'icon-instagram' },
+  { fa: 'fa-brands fa-discord',   cls: 'icon-discord'   },
+  { fa: 'fa-brands fa-x-twitter', cls: 'icon-twitter'   }
+];
+var msgs = [
+  'Bienvenue sur le stream de NasNekkk',
+  'Abonnez-vous pour ne rien manquer',
+  'Stream tous les soirs',
+  'Posez vos questions en chat'
+];
+var handle = '@NasNekkk';
+var cur = 0;
+
+function buildSocial() {
+  return socials.map(function(s) {
+    return '<span style="display:inline-flex;align-items:center;gap:5px;padding-right:16px;white-space:nowrap;">' +
+      '<span class="' + s.cls + '" style="width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;font-size:7px;flex-shrink:0;">' +
+      '<i class="' + s.fa + '"></i></span>' +
+      '<span style="font-size:9px;font-weight:600;color:#fff;">' + handle + '</span>' +
+      '</span>' +
+      '<span style="color:#444;padding-right:16px;font-size:9px;">·</span>';
+  }).join('');
+}
+
+function buildMsg() {
+  return msgs.map(function(m) {
+    return '<span style="font-size:9px;color:#ddd;padding-right:16px;white-space:nowrap;">' + m + '</span>' +
+           '<span style="color:#cc0000;padding-right:16px;font-weight:700;font-size:9px;">·</span>';
+  }).join('');
+}
+
+function renderCycle(c) {
+  var track = document.getElementById('tr');
+  var lbl   = document.getElementById('tlbl');
+  if (!track) return;
+  track.style.opacity = '0';
+  setTimeout(function() {
+    var d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:center;white-space:nowrap;';
+    d.innerHTML = c === 0 ? buildSocial() : buildMsg();
+    d.style.animation = 'ftAnim ' + (c === 0 ? '18' : '22') + 's linear infinite';
+    if (lbl) lbl.textContent = c === 0 ? 'RÉSEAUX' : 'BREAKING';
+    track.innerHTML = '';
+    track.appendChild(d);
+    track.style.opacity = '1';
+  }, 300);
+}
+
+renderCycle(0);
+setInterval(function() { cur = cur === 0 ? 1 : 0; renderCycle(cur); }, 14000);
+</script>
+</body>
+</html>
